@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Tesouraria | Movimentos{% endblock %}
+{% block page_title %}Fluxo de Caixa (Entradas e Saídas){% endblock %}
+
+{% block content %}
+<div class="card-glass mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 text-dark fw-bold">Histórico de Movimentações</h5>
+        <div class="d-flex gap-2">
+            <div class="dropdown">
+                <button class="btn btn-pill btn-outline-secondary border-2 fw-semibold shadow-sm rounded-pill px-4 dropdown-toggle" type="button" id="dropdownExportMovimentos" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-download"></i> Exportar
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-4" aria-labelledby="dropdownExportMovimentos">
+                    <li><a class="dropdown-item text-success fw-medium py-2" href="{% url 'tesouraria:export-movimentos-csv' %}"><i class="fas fa-file-csv me-2"></i> CSV</a></li>
+                    <li><a class="dropdown-item text-danger fw-medium py-2" href="{% url 'tesouraria:export-movimentos-pdf' %}"><i class="fas fa-file-pdf me-2"></i> PDF</a></li>
+                </ul>
+            </div>
+            <a href="{% url 'tesouraria:movimento-create' %}" class="btn btn-pill btn-cyan border-2 fw-semibold shadow-sm rounded-pill px-4">
+                <i class="fas fa-plus"></i> Novo Lançamento
+            </a>
+        </div>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Descrição / Categoria</th>
+                    <th>Conta</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movimento in movimentos %}
+                <tr>
+                    <td style="width: 120px;">
+                        <small class="text-muted fw-bold">{{ movimento.data|date:"d/m/Y" }}</small>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-column">
+                            <span class="fw-bold text-dark">{{ movimento.descricao|default:"Sem descrição" }}</span>
+                            <small class="badge {% if movimento.tipo == 'E' %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} rounded-pill" style="width: fit-content; font-size: 0.7rem;">
+                                {{ movimento.categoria.nome }}
+                            </small>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-muted"><i class="fas fa-wallet small me-1"></i> {{ movimento.conta.nome }}</span>
+                    </td>
+                    <td>
+                        <span class="fw-bold {% if movimento.tipo == 'E' %}text-success{% else %}text-danger{% endif %}">
+                            {% if movimento.tipo == 'E' %}+{% else %}-{% endif %} R$ {{ movimento.valor }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'tesouraria:movimento-update' movimento.pk %}" class="btn btn-sm btn-outline-info rounded-circle me-1" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'tesouraria:movimento-delete' movimento.pk %}" class="btn btn-sm btn-outline-danger rounded-circle" title="Excluir">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        Nenhum movimento registrado.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

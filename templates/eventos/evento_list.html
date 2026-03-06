@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Eventos | Lista{% endblock %}
+{% block page_title %}Lista de Eventos{% endblock %}
+
+{% block content %}
+<div class="card-glass mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 text-dark fw-bold">Gerenciamento de Eventos</h5>
+        <div class="d-flex gap-2">
+            <div class="dropdown">
+                <button class="btn btn-pill btn-outline-secondary border-2 fw-semibold shadow-sm rounded-pill px-4 dropdown-toggle" type="button" id="dropdownExportEventos" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-download"></i> Exportar
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-4" aria-labelledby="dropdownExportEventos">
+                    <li><a class="dropdown-item text-success fw-medium py-2" href="{% url 'eventos:export-eventos-csv' %}"><i class="fas fa-file-csv me-2"></i> CSV</a></li>
+                    <li><a class="dropdown-item text-danger fw-medium py-2" href="{% url 'eventos:export-eventos-pdf' %}"><i class="fas fa-file-pdf me-2"></i> PDF</a></li>
+                </ul>
+            </div>
+            <a href="{% url 'eventos:evento-create' %}" class="btn btn-pill btn-cyan border-2 fw-semibold shadow-sm rounded-pill px-4">
+                <i class="fas fa-plus"></i> Novo Evento
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nome do Evento</th>
+                    <th>Período</th>
+                    <th>Valor Necessário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for evento in eventos %}
+                <tr>
+                    <td>
+                        <h6 class="mb-0 fw-bold text-dark">{{ evento.nome }}</h6>
+                    </td>
+                    <td>
+                        <span class="text-muted"><i class="far fa-calendar-alt"></i> {{ evento.data_inicio|date:"d/m/Y" }} a {{ evento.data_fim|date:"d/m/Y" }}</span>
+                    </td>
+                    <td><span class="badge" style="background-color: var(--primary-cyan-light); color: var(--primary-cyan-dark);">R$ {{ evento.valor_necessario }}</span></td>
+                    <td>
+                        <div class="dropdown d-inline-block me-1">
+                            <button class="btn btn-sm btn-outline-secondary rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Exportar Participantes">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-4" style="min-width: 120px;">
+                                <li><a class="dropdown-item text-success py-2" href="{% url 'eventos:export-evento-participantes-csv' evento.pk %}"><i class="fas fa-file-csv me-2"></i> CSV</a></li>
+                                <li><a class="dropdown-item text-danger py-2" href="{% url 'eventos:export-evento-participantes-pdf' evento.pk %}"><i class="fas fa-file-pdf me-2"></i> PDF</a></li>
+                            </ul>
+                        </div>
+                        <a href="{% url 'eventos:evento-update' evento.pk %}" class="btn btn-sm btn-outline-info rounded-circle me-1" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'eventos:evento-delete' evento.pk %}" class="btn btn-sm btn-outline-danger rounded-circle" title="Excluir">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">
+                        Nenhum evento encontrado.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

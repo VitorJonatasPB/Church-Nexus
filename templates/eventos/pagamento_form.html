@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Eventos | {% if form.instance.pk %}Editar Pagamento{% else %}Registrar Pagamento{% endif %}{% endblock %}
+{% block page_title %}{% if form.instance.pk %}Editar Pagamento{% else %}Registrar Pagamento{% endif %}{% endblock %}
+
+{% block extra_css %}
+<!-- DAL Select2 CSS -->
+{{ form.media.css }}
+<style>
+    /* Correção do Select2 para casar com o Rounded Input */
+    .select2-container .select2-selection--single {
+        display: flex;
+        align-items: center;
+        padding: 22px !important;
+    }
+    .select2-selection__arrow {
+        top: 8px !important;
+    }
+    .select2-container--default .select2-selection--single {
+        background-color: #f8fafc;
+        border: 1px solid #ced4da;
+        border-radius: 16px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card-glass mb-4" style="max-width: 600px; margin: 0 auto;">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="row">
+            {% for field in form %}
+            <div class="col-md-12 mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-secondary" style="font-size: 0.9rem;">
+                    {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                
+                {% if field.field.widget.input_type == 'checkbox' %}
+                    <div class="form-check form-switch mt-2">
+                        {{ field }}
+                    </div>
+                {% else %}
+                    <!-- Render manual com as classes do Bootstrap -->
+                    <div class="control-wrapper">
+                        {{ field }}
+                    </div>
+                {% endif %}
+                
+                {% if field.help_text %}
+                    <div class="form-text text-muted" style="font-size: 0.8rem;">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="text-danger mt-1" style="font-size: 0.85rem;">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+            <a href="{% url 'eventos:pagamento-list' %}" class="btn btn-pill btn-outline-secondary me-2">Cancelar</a>
+            <button type="submit" class="btn btn-pill btn-success">
+                <i class="fas fa-check"></i> {% if form.instance.pk %}Salvar Alterações{% else %}Registrar Pagamento{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- jQuery (Necessário pro Select2 DAL do Participante) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{{ form.media.js }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ignora os selects do autocomplte
+        const inputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="file"]), select:not(.select2-hidden-accessible), textarea');
+        inputs.forEach(input => {
+            input.classList.add('form-control', 'input-rounded');
+        });
+    });
+</script>
+{% endblock %}

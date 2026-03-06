@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Tesouraria | Excluir Conta{% endblock %}
+{% block page_title %}Excluir Conta{% endblock %}
+
+{% block content %}
+<div class="card-glass border border-danger mx-auto text-center py-5" style="max-width: 600px;">
+    <i class="fas fa-exclamation-triangle fa-3x text-danger mb-4"></i>
+    <h3 class="fw-bold text-dark mb-3">Deseja excluir esta conta?</h3>
+    <p class="text-muted mb-4">
+        Você está prestes a excluir a conta <strong>"{{ object.nome }}"</strong>. <br>
+        Esta ação pode ser impedida se houver movimentos vinculados a ela.
+    </p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <a href="{% url 'tesouraria:conta-list' %}" class="btn btn-pill btn-outline-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-pill btn-danger ms-2">Sim, excluir</button>
+    </form>
+</div>
+{% endblock %}

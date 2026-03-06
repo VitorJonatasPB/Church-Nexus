@@ -1,0 +1,134 @@
+    {% extends 'core/base.html' %}
+    {% load static %}
+
+    {% block title %}Secretaria | {% if form.instance.pk %}Editar Membro{% else %}Novo Membro{% endif %}{% endblock %}
+    {% block page_title %}{% if form.instance.pk %}Editar Membro{% else %}Novo Membro{% endif %}{% endblock %}
+
+    {% block extra_css %}
+    <!-- DAL Select2 CSS -->
+    {{ form.media.css }}
+    <style>
+        /* Correção do Select2 para casar com o Rounded Input */
+        .select2-container .select2-selection--single {
+            display: flex;
+            align-items: center;
+            padding: 22px !important;
+        }
+        .select2-selection__arrow {
+            top: 8px !important;
+        }
+        .select2-container--default .select2-selection--single {
+            background-color: #f8fafc;
+            border: 1px solid #ced4da;
+            border-radius: 16px;
+        }
+    </style>
+    {% endblock %}
+
+    {% block content %}
+    <div class="card-glass mb-4" style="max-width: 800px; margin: 0 auto;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row mb-4 justify-content-center">
+                <div class="col-12 text-center">
+                    <label for="{{ form.foto.id_for_label }}" class="form-label fw-semibold text-secondary d-none">
+                        {{ form.foto.label }}
+                    </label>
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="position-relative" style="width: 120px; height: 120px; margin-bottom: 10px;">
+                            <img id="fotoPreview" 
+                                 src="{% if form.instance.foto %}{{ form.instance.foto.url }}{% else %}{% static 'vendor/adminlte/img/default.jpg' %}{% endif %}" 
+                                 alt="Preview" 
+                                 class="rounded-circle shadow-sm" 
+                                 style="width: 100%; height: 100%; object-fit: cover; border: 3px solid var(--primary-cyan-light); cursor: pointer;"
+                                 onclick="document.getElementById('{{ form.foto.id_for_label }}').click();">
+                            
+                            <div class="position-absolute bottom-0 end-0 bg-cyan text-white rounded-circle d-flex justify-content-center align-items-center" 
+                                 style="width: 32px; height: 32px; cursor: pointer; background-color: var(--primary-cyan); box-shadow: 0 2px 5px rgba(0,0,0,0.2);"
+                                 onclick="document.getElementById('{{ form.foto.id_for_label }}').click();">
+                                <i class="fas fa-camera" style="font-size: 0.8rem;"></i>
+                            </div>
+                        </div>
+                        <small class="text-muted text-center" style="max-width: 200px;">Clique na imagem para enviar uma nova foto.</small>
+                        <div class="d-none">
+                            {{ form.foto }}
+                        </div>
+                        {% if form.foto.errors %}
+                            <div class="text-danger mt-1" style="font-size: 0.85rem;">{{ form.foto.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                {% for field in form %}
+                    {% if field.name != 'foto' %}
+                    <div class="col-md-{% if field.name in 'nome,endereco' %}12{% else %}6{% endif %} mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-secondary" style="font-size: 0.9rem;">
+                            {{ field.label }} {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                        </label>
+                        
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="form-check form-switch mt-2">
+                                {{ field }}
+                            </div>
+                        {% else %}
+                            <!-- Render manual com as classes do Bootstrap -->
+                            <div class="control-wrapper">
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                            <div class="form-text text-muted" style="font-size: 0.8rem;">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger mt-1" style="font-size: 0.85rem;">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                <a href="{% url 'secretaria:membro-list' %}" class="btn btn-pill btn-outline-secondary me-2">Cancelar</a>
+                <button type="submit" class="btn btn-pill btn-cyan">
+                    {% if form.instance.pk %}Salvar Alterações{% else %}Cadastrar Membro{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endblock %}
+
+    {% block extra_js %}
+    <!-- jQuery (Necessário pro Select2 DAL) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{ form.media.js }}
+
+    <script>
+        // Injeção da classe 'input-rounded' e 'form-control' nos campos gerados pelo Django
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="file"]), select, textarea');
+            inputs.forEach(input => {
+                input.classList.add('form-control', 'input-rounded');
+            });
+            
+            // Lógica de Preview de Imagem Dinâmica
+            const fotoInput = document.getElementById('{{ form.foto.id_for_label }}');
+            const fotoPreview = document.getElementById('fotoPreview');
+            
+            if (fotoInput && fotoPreview) {
+                fotoInput.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            fotoPreview.src = e.target.result;
+                        }
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+            }
+        });
+    </script>
+    {% endblock %}

@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %} {% block content %}
+<div id="content-main">
+  <div class="app-relatorios module" id="app-relatorios">
+    <table>
+      <caption>
+        <a href="#" class="section" title="Módulos para Exportação">Exportação de Relatórios</a>
+      </caption>
+      <tbody>
+        {% for mod in modulos %}
+        <tr class="model-{{ mod.label }}">
+          <th scope="row"><a href="{{ mod.url }}">{{ mod.nome }}</a></th>
+          <td><a href="{{ mod.url }}" class="changelink">Exportar CSV</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

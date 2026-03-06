@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Tesouraria | Excluir Categoria{% endblock %}
+{% block page_title %}Excluir Categoria{% endblock %}
+
+{% block content %}
+<div class="card-glass border border-danger mx-auto text-center py-5" style="max-width: 600px;">
+    <i class="fas fa-exclamation-triangle fa-3x text-danger mb-4"></i>
+    <h3 class="fw-bold text-dark mb-3">Deseja excluir esta categoria?</h3>
+    <p class="text-muted mb-4">
+        Você está prestes a excluir a categoria <strong>"{{ object.nome }}"</strong>. <br>
+        Esta ação pode ser impedida se houver movimentos vinculados a ela.
+    </p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <a href="{% url 'tesouraria:categoria-list' %}" class="btn btn-pill btn-outline-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-pill btn-danger ms-2">Sim, excluir</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Painel - Secretaria{% endblock %}</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS Base do Frontend -->
+    <link rel="stylesheet" href="/static/css/frontend.css">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="d-flex flex-column">
+            <div class="brand-section">
+                <i class="fas fa-church text-info"></i> Sistema S.E.T
+            </div>
+            
+            <div class="flex-grow-1" style="overflow-y: auto; overflow-x: hidden;">
+                <ul class="nav flex-column pb-4">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'core:dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <a href="#collapseSecretaria" data-bs-toggle="collapse" class="text-decoration-none d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase fw-bold sidebar-menu-toggle" aria-expanded="{% if 'areas' in request.path or 'congregacoes' in request.path or 'membros' in request.path %}true{% else %}false{% endif %}" style="font-size: 0.75rem; opacity: 0.8; margin-left: 10px; cursor: pointer;">
+                        <span>Secretaria</span>
+                        <i class="fas fa-chevron-down transition-icon me-3" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                    </a>
+                    <div class="collapse {% if 'areas' in request.path or 'congregacoes' in request.path or 'membros' in request.path %}show{% endif %}" id="collapseSecretaria">
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'areas' in request.path %}active{% endif %}" href="{% url 'secretaria:area-list' %}">
+                                <i class="fas fa-map-marked-alt"></i> Áreas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'congregacoes' in request.path %}active{% endif %}" href="{% url 'secretaria:congregacao-list' %}">
+                                <i class="fas fa-church"></i> Congregações
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'membros' in request.path %}active{% endif %}" href="{% url 'secretaria:membro-list' %}">
+                                <i class="fas fa-users"></i> Membros
+                            </a>
+                        </li>
+                    </div>
+                    
+                    <a href="#collapseEventos" data-bs-toggle="collapse" class="text-decoration-none d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase fw-bold sidebar-menu-toggle" aria-expanded="{% if 'eventos' in request.path or 'participantes' in request.path or 'pagamentos' in request.path %}true{% else %}false{% endif %}" style="font-size: 0.75rem; opacity: 0.8; margin-left: 10px; cursor: pointer;">
+                        <span>Eventos</span>
+                        <i class="fas fa-chevron-down transition-icon me-3" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                    </a>
+                    <div class="collapse {% if request.resolver_match.url_name == 'evento-list' or 'participantes' in request.path or 'pagamentos' in request.path %}show{% endif %}" id="collapseEventos">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'evento-list' %}active{% endif %}" href="{% url 'eventos:evento-list' %}">
+                                <i class="fas fa-calendar-alt"></i> Eventos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'participantes' in request.path %}active{% endif %}" href="{% url 'eventos:participante-list' %}">
+                                <i class="fas fa-ticket-alt"></i> Participantes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'pagamentos' in request.path %}active{% endif %}" href="{% url 'eventos:pagamento-list' %}">
+                                <i class="fas fa-money-bill-wave"></i> Insc. / Pagamentos
+                            </a>
+                        </li>
+                    </div>
+
+                    <a href="#collapseTesouraria" data-bs-toggle="collapse" class="text-decoration-none d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase fw-bold sidebar-menu-toggle" aria-expanded="{% if 'contas' in request.path or 'categorias' in request.path or 'movimentos' in request.path %}true{% else %}false{% endif %}" style="font-size: 0.75rem; opacity: 0.8; margin-left: 10px; cursor: pointer;">
+                        <span>Tesouraria</span>
+                        <i class="fas fa-chevron-down transition-icon me-3" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                    </a>
+                    <div class="collapse {% if 'contas' in request.path or 'categorias' in request.path or 'movimentos' in request.path %}show{% endif %}" id="collapseTesouraria">
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'contas' in request.path %}active{% endif %}" href="{% url 'tesouraria:conta-list' %}">
+                                <i class="fas fa-wallet"></i> Contas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'categorias' in request.path %}active{% endif %}" href="{% url 'tesouraria:categoria-list' %}">
+                                <i class="fas fa-tags"></i> Categorias
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'movimentos' in request.path %}active{% endif %}" href="{% url 'tesouraria:movimento-list' %}">
+                                <i class="fas fa-exchange-alt"></i> Movimentações
+                            </a>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+            
+            <div class="w-100 p-3 mt-auto bg-white" style="border-top: 1px solid #e2e8f0; z-index: 10;">
+                <a href="/admin/logout/" class="btn btn-outline-danger w-100 btn-pill">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content" class="w-100">
+            <!-- Topbar Custom -->
+            <div class="d-flex justify-content-between align-items-center mb-4 custom-topbar">
+                <h2 class="m-0 fw-bold" style="color: var(--secondary-text);">{% block page_title %}{% endblock %}</h2>
+                
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <span class="d-flex align-items-center" style="cursor:pointer;" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle fa-2x text-secondary me-2"></i>
+                            <span class="fw-semibold">{{ request.user.username }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages/Alerts -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show card-glass p-3 mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Main Content Block -->
+            {% block content %}{% endblock %}
+            
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
