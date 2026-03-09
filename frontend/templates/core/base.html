@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Painel - Secretaria{% endblock %}</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Inline CSS Base do Frontend (Para contornar cache e forçar Dark Theme) -->
+    <style>
+        :root {
+          --primary-cyan: #0dcaf0;
+          --primary-cyan-dark: #087f96;
+          --font-family: "Inter", sans-serif;
+        }
+
+        body {
+          font-family: var(--font-family);
+          background: #f4f6fc; /* Clean light background */
+          color: #455a64;
+          min-height: 100vh;
+        }
+
+        /* Essential Boostrap adjustment if needed */
+        .text-success { color: #198754 !important; }  
+        .text-danger { color: #dc3545 !important; }   
+        table td, table th { font-size: 0.9rem !important; vertical-align: middle !important; }
+        /* Background Decorations */
+        .bg-decoration {
+          position: fixed; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.5; pointer-events: none;
+        }
+        .bg-decoration-1 { top: -10%; right: -5%; width: 50vw; height: 50vw; background: linear-gradient(135deg, #0dcaf0, #0d6efd); max-width: 600px; max-height: 600px; }
+        .bg-decoration-2 { bottom: -10%; left: -5%; width: 60vw; height: 60vw; background: linear-gradient(135deg, #20c997, #198754); max-width: 700px; max-height: 700px; }
+
+        /* Sidebar Glassmorphism */
+        #sidebar {
+          min-width: 250px; max-width: 250px; height: 100vh;
+          background: rgba(15, 32, 39, 0.6) !important;
+          backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+          border-right: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+          position: fixed; top: 0; left: 0; z-index: 1000;
+        }
+
+        #content { margin-left: 250px; padding: 24px; min-height: 100vh; }
+
+        .custom-topbar { background-color: transparent; padding: 16px 0; border-bottom: 0; }
+        .brand-section { padding: 24px; font-weight: 700; font-size: 1.25rem; color: #0dcaf0; text-shadow: 0 0 10px rgba(13, 202, 240, 0.3); }
+
+        .nav-link { color: rgba(255, 255, 255, 0.7); border-radius: 12px; margin: 4px 16px; padding: 10px 16px; transition: all 0.3s ease; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { background-color: rgba(255, 255, 255, 0.1); color: #fff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .nav-link i { width: 24px; text-align: center; margin-right: 8px; }
+
+        /* Cards Pill Style */
+        .card-glass {
+          border-radius: 24px;
+          background: #ffffff !important;
+          border: 1px solid rgba(0, 0, 0, 0.05) !important;
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+          padding: 20px; margin-bottom: 24px; color: #333 !important;
+        }
+
+        .btn-pill { border-radius: 50px; font-weight: 600; padding: 8px 24px; transition: all 0.3s ease; }
+        .btn-cyan { background-color: var(--primary-cyan); color: #fff; border: none; }
+        .btn-cyan:hover { background-color: var(--primary-cyan-dark); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 188, 212, 0.3); }
+
+        /* Lighter Outline Buttons (Exportar) */
+        .btn-outline-secondary { border-color: rgba(0,0,0,0.2) !important; color: #455a64 !important; }
+        .btn-outline-secondary:hover { background-color: rgba(0,0,0,0.05) !important; color: #333 !important; }
+
+        .input-rounded, .form-control, .form-select {
+          border-radius: 16px !important; border: 1px solid rgba(0, 0, 0, 0.1) !important;
+          padding: 10px 16px; background-color: #fff !important; color: #333 !important;
+        }
+        .input-rounded:focus, .form-control:focus, .form-select:focus {
+          border-color: var(--primary-cyan) !important; box-shadow: 0 0 10px rgba(0, 188, 212, 0.3) !important;
+          background-color: #fff !important; color: #333 !important;
+        }
+        
+        .form-select option { background-color: #fff; color: #333; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-cyan); }
+
+        .sidebar-menu-toggle { color: rgba(255, 255, 255, 0.5) !important; }
+        .sidebar-menu-toggle .transition-icon { font-size: 0.8rem; }
+        .sidebar-menu-toggle[aria-expanded="true"] .transition-icon { transform: rotate(180deg); }
+        .sidebar-menu-toggle:hover { color: #fff !important; opacity: 1 !important; }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Background Decorators -->
+    <div class="bg-decoration bg-decoration-1"></div>
+    <div class="bg-decoration bg-decoration-2"></div>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="d-flex flex-column">
+            <div class="brand-section">
+                <i class="fas fa-church text-info"></i> Church Nexus
+            </div>
+            
+            <div class="flex-grow-1" style="overflow-y: auto; overflow-x: hidden;">
+                <ul class="nav flex-column pb-4">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'core:dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <a href="#collapseSecretaria" data-bs-toggle="collapse" class="text-decoration-none d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase fw-bold sidebar-menu-toggle" aria-expanded="{% if 'areas' in request.path or 'congregacoes' in request.path or 'membros' in request.path %}true{% else %}false{% endif %}" style="font-size: 0.75rem; opacity: 0.8; margin-left: 10px; cursor: pointer;">
+                        <span>Secretaria</span>
+                        <i class="fas fa-chevron-down transition-icon me-3" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                    </a>
+                    <div class="collapse {% if 'areas' in request.path or 'congregacoes' in request.path or 'membros' in request.path %}show{% endif %}" id="collapseSecretaria">
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'areas' in request.path %}active{% endif %}" href="{% url 'secretaria:area-list' %}">
+                                <i class="fas fa-map-marked-alt"></i> Áreas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'congregacoes' in request.path %}active{% endif %}" href="{% url 'secretaria:congregacao-list' %}">
+                                <i class="fas fa-church"></i> Congregações
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'membros' in request.path %}active{% endif %}" href="{% url 'secretaria:membro-list' %}">
+                                <i class="fas fa-users"></i> Membros
+                            </a>
+                        </li>
+                    </div>
+                    
+                    <a href="#collapseEventos" data-bs-toggle="collapse" class="text-decoration-none d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase fw-bold sidebar-menu-toggle" aria-expanded="{% if 'eventos' in request.path or 'participantes' in request.path or 'pagamentos' in request.path %}true{% else %}false{% endif %}" style="font-size: 0.75rem; opacity: 0.8; margin-left: 10px; cursor: pointer;">
+                        <span>Eventos</span>
+                        <i class="fas fa-chevron-down transition-icon me-3" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                    </a>
+                    <div class="collapse {% if request.resolver_match.url_name == 'evento-list' or 'participantes' in request.path or 'pagamentos' in request.path %}show{% endif %}" id="collapseEventos">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'evento-list' %}active{% endif %}" href="{% url 'eventos:evento-list' %}">
+                                <i class="fas fa-calendar-alt"></i> Eventos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'participantes' in request.path %}active{% endif %}" href="{% url 'eventos:participante-list' %}">
+                                <i class="fas fa-ticket-alt"></i> Participantes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'pagamentos' in request.path %}active{% endif %}" href="{% url 'eventos:pagamento-list' %}">
+                                <i class="fas fa-money-bill-wave"></i> Insc. / Pagamentos
+                            </a>
+                        </li>
+                    </div>
+
+                    <a href="#collapseTesouraria" data-bs-toggle="collapse" class="text-decoration-none d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase fw-bold sidebar-menu-toggle" aria-expanded="{% if 'contas' in request.path or 'categorias' in request.path or 'movimentos' in request.path or 'tesouraria/analise' in request.path %}true{% else %}false{% endif %}" style="font-size: 0.75rem; opacity: 0.8; margin-left: 10px; cursor: pointer;">
+                        <span>Tesouraria</span>
+                        <i class="fas fa-chevron-down transition-icon me-3" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                    </a>
+                    <div class="collapse {% if 'contas' in request.path or 'categorias' in request.path or 'movimentos' in request.path or 'tesouraria/analise' in request.path %}show{% endif %}" id="collapseTesouraria">
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'tesouraria/analise' in request.path %}active{% endif %}" href="{% url 'tesouraria:analise' %}">
+                                <i class="fas fa-chart-line"></i> Análise
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'contas' in request.path %}active{% endif %}" href="{% url 'tesouraria:conta-list' %}">
+                                <i class="fas fa-wallet"></i> Contas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'categorias' in request.path %}active{% endif %}" href="{% url 'tesouraria:categoria-list' %}">
+                                <i class="fas fa-tags"></i> Categorias
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'movimentos' in request.path %}active{% endif %}" href="{% url 'tesouraria:movimento-list' %}">
+                                <i class="fas fa-exchange-alt"></i> Movimentações
+                            </a>
+                        </li>
+                    </div>
+                    
+                    {% if request.user.is_superuser %}
+                    <a href="#collapseAdmin" data-bs-toggle="collapse" class="text-decoration-none d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted text-uppercase fw-bold sidebar-menu-toggle" aria-expanded="{% if 'usuarios' in request.path or 'grupos' in request.path %}true{% else %}false{% endif %}" style="font-size: 0.75rem; opacity: 0.8; margin-left: 10px; cursor: pointer;">
+                        <span>Administração</span>
+                        <i class="fas fa-chevron-down transition-icon me-3" style="transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></i>
+                    </a>
+                    <div class="collapse {% if 'usuarios' in request.path or 'grupos' in request.path %}show{% endif %}" id="collapseAdmin">
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'usuarios' in request.path %}active{% endif %}" href="{% url 'core:user-list' %}">
+                                <i class="fas fa-user-shield"></i> Usuários
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'grupos' in request.path %}active{% endif %}" href="{% url 'core:group-list' %}">
+                                <i class="fas fa-users-cog"></i> Grupos / Permissões
+                            </a>
+                        </li>
+                    </div>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <div class="w-100 p-3 mt-auto" style="border-top: 1px solid rgba(255,255,255,0.1); z-index: 10;">
+                <form action="{% url 'core:logout' %}" method="post" class="w-100">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger w-100 btn-pill">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content" class="w-100">
+            <!-- Topbar Custom -->
+            <div class="d-flex justify-content-between align-items-center mb-4 custom-topbar">
+                <h2 class="m-0 fw-bold text-dark">{% block page_title %}{% endblock %}</h2>
+                
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <span class="d-flex align-items-center dropdown-toggle text-dark" style="cursor:pointer;" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-2x me-2" style="color: #0dcaf0;"></i>
+                            <span class="fw-semibold">{{ request.user.get_full_name|default:request.user.username }}</span>
+                        </span>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="border-radius: 12px; min-width: 200px;">
+                            <li><a class="dropdown-item py-2 fw-semibold" href="{% url 'core:profile' %}">
+                                <i class="fas fa-id-card me-2 text-primary"></i> Meu Perfil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{% url 'core:logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item py-2 fw-semibold text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Sair do Sistema
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages/Alerts -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show card-glass p-3 mb-4" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Main Content Block -->
+            {% block content %}{% endblock %}
+            
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

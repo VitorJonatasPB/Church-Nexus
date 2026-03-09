@@ -1,0 +1,218 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Análise Financeira | S.E.T{% endblock %}
+{% block page_title %}Análise Financeira da Tesouraria{% endblock %}
+
+{% block content %}
+<!-- KPIs Financeiros -->
+<div class="row g-4 mb-4">
+    <!-- Saldo Total (acumulado) -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid #0dcaf0;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas fa-wallet fa-2x text-info"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Saldo Atual (Todas as Contas)</h6>
+            </div>
+            <h3 class="fw-bold text-dark mb-0">R$ {{ saldo_total|floatformat:2 }}</h3>
+        </div>
+    </div>
+    
+    <!-- Entradas do Mês -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid #198754;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas fa-arrow-up fa-2x text-success"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Entradas (Mês)</h6>
+            </div>
+            <h3 class="fw-bold text-success mb-0">R$ {{ entradas_mes|floatformat:2 }}</h3>
+        </div>
+    </div>
+    
+    <!-- Saídas do Mês -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid #dc3545;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas fa-arrow-down fa-2x text-danger"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Saídas (Mês)</h6>
+            </div>
+            <h3 class="fw-bold text-danger mb-0">R$ {{ saidas_mes|floatformat:2 }}</h3>
+        </div>
+    </div>
+    
+    <!-- Balanço do Mês -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid {% if saldo_mes >= 0 %}#198754{% else %}#dc3545{% endif %};">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas fa-balance-scale fa-2x {% if saldo_mes >= 0 %}text-success{% else %}text-danger{% endif %}"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Balanço (Mês)</h6>
+            </div>
+            <h3 class="fw-bold {% if saldo_mes >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+                R$ {{ saldo_mes|floatformat:2 }}
+            </h3>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <!-- Chart 1: Fluxo de Caixa (Barras Empilhadas ou Lado a Lado) -->
+    <div class="col-md-8">
+        <div class="card-glass p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0 text-dark">Fluxo de Caixa Mensal (Últimos 6 meses)</h5>
+            </div>
+            <div style="height: 300px; width: 100%;">
+                <canvas id="chartFluxoDeCaixa"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart 2: Despesas por Categoria (Pizza) -->
+    <div class="col-md-4">
+        <div class="card-glass p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0 text-dark">Despesas por Categoria (Mês Atual)</h5>
+            </div>
+            <div style="height: 300px; width: 100%; display: flex; justify-content: center;">
+                {% if chart_categorias_labels %}
+                <canvas id="chartCategorias"></canvas>
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center h-100 w-100">
+                    <span class="text-muted fw-bold">Nenhuma despesa registrada no mês atual.</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Dados Gráfico Fluxo de Caixa
+        const labelsFinanceiro = {{ chart_financeiro_labels|safe }};
+        const dataEntradas = {{ chart_financeiro_entradas|safe }};
+        const dataSaidas = {{ chart_financeiro_saidas|safe }};
+
+        // Cores
+        const colorSuccess = '#198754';
+        const colorDanger = '#dc3545';
+
+        // Configuração Gráfico Fluxo de Caixa
+        const ctxFluxo = document.getElementById('chartFluxoDeCaixa').getContext('2d');
+        new Chart(ctxFluxo, {
+            type: 'bar',
+            data: {
+                labels: labelsFinanceiro,
+                datasets: [
+                    {
+                        label: 'Entradas',
+                        data: dataEntradas,
+                        backgroundColor: colorSuccess,
+                        borderRadius: 4,
+                    },
+                    {
+                        label: 'Saídas',
+                        data: dataSaidas,
+                        backgroundColor: colorDanger,
+                        borderRadius: 4,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5], color: '#e9ecef' },
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Gráfico Categorias (Donut)
+        {% if chart_categorias_labels %}
+        const labelsCategorias = {{ chart_categorias_labels|safe }};
+        const dataCategorias = {{ chart_categorias_valores|safe }};
+        
+        // Gerar paleta de cores para categorias
+        const bgColors = [
+            '#0dcaf0', '#6610f2', '#fd7e14', '#20c997', 
+            '#e83e8c', '#6f42c1', '#17a2b8', '#ffc107', 
+            '#d63384', '#0d6efd'
+        ];
+        
+        const ctxPCat = document.getElementById('chartCategorias').getContext('2d');
+        new Chart(ctxPCat, {
+            type: 'doughnut',
+            data: {
+                labels: labelsCategorias,
+                datasets: [{
+                    data: dataCategorias,
+                    backgroundColor: bgColors,
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 15,
+                            font: { size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                cutout: '65%' // Donut hole size
+            }
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

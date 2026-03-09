@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+{% block title %}Usuários | S.E.T{% endblock %}
+{% block page_title %}Gestão de Usuários{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0 text-dark">Usuários do Sistema</h5>
+        <a href="{% url 'core:user-create' %}" class="btn btn-primary shadow-sm" style="border-radius: 10px;">
+            <i class="fas fa-user-plus me-2"></i>Novo Usuário
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Usuário</th>
+                    <th>Nome Completo</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Grupos</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td class="fw-bold">{{ u.username }}</td>
+                    <td>{{ u.get_full_name|default:"-" }}</td>
+                    <td>{{ u.email|default:"-" }}</td>
+                    <td>
+                        {% if u.is_active %}
+                        <span class="badge bg-success">Ativo</span>
+                        {% else %}
+                        <span class="badge bg-danger">Inativo</span>
+                        {% endif %}
+                        {% if u.is_superuser %}
+                        <span class="badge bg-primary ms-1">Admin</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for group in u.groups.all %}
+                            <span class="badge bg-secondary">{{ group.name }}</span>
+                        {% empty %}
+                            <span class="text-muted small">Nenhum</span>
+                        {% endfor %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'core:user-update' u.pk %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        {% if u != request.user %}
+                        <a href="{% url 'core:user-delete' u.pk %}" class="btn btn-sm btn-outline-danger" title="Excluir">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Nenhum usuário cadastrado.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Excluir Usuário | S.E.T{% endblock %}
+{% block page_title %}Excluir Usuário: {{ object.username }}{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 border-danger border-top border-3">
+    <div class="text-center mb-4">
+        <i class="fas fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+        <h4 class="fw-bold">Tem certeza que deseja excluir este usuário?</h4>
+        <p class="text-muted">A exclusão não poderá ser desfeita. O usuário <strong>{{ object.username }}</strong> perderá o acesso ao sistema.</p>
+    </div>
+
+    <form method="post" class="d-flex justify-content-center gap-3 mt-4">
+        {% csrf_token %}
+        <a href="{% url 'core:user-list' %}" class="btn btn-secondary px-4 shadow-sm">
+            <i class="fas fa-times me-2"></i>Cancelar
+        </a>
+        <button type="submit" class="btn btn-danger px-4 shadow-sm">
+            <i class="fas fa-trash-alt me-2"></i>Sim, Excluir Usuário
+        </button>
+    </form>
+</div>
+{% endblock %}

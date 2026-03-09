@@ -1,0 +1,220 @@
+:root {
+  --primary-cyan: #00bcd4;
+  --primary-cyan-light: #e0f7fa;
+  --primary-cyan-dark: #00838f;
+  --secondary-text: #455a64;
+  --bg-color: #f4f6fc;
+  --card-bg: #ffffff;
+  --font-family: "Inter", sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background: #0f2027; /* Fallback */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background-attachment: fixed;
+  color: #f4f6fc;
+  min-height: 100vh;
+}
+
+/* Background Decorations (Globally) */
+.bg-decoration {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.bg-decoration-1 {
+  top: -10%;
+  right: -5%;
+  width: 50vw;
+  height: 50vw;
+  background: linear-gradient(135deg, #0dcaf0, #0d6efd);
+  max-width: 600px;
+  max-height: 600px;
+}
+.bg-decoration-2 {
+  bottom: -10%;
+  left: -5%;
+  width: 60vw;
+  height: 60vw;
+  background: linear-gradient(135deg, #20c997, #198754);
+  max-width: 700px;
+  max-height: 700px;
+}
+
+/* Sidebar Estilo Float / Glassmorphism */
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  height: 100vh;
+  background: rgba(15, 32, 39, 0.6);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+#content {
+  margin-left: 250px;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* Navbar de topo limpa */
+.custom-topbar {
+  background-color: transparent;
+  padding: 16px 0;
+  border-bottom: 0;
+}
+
+.brand-section {
+  padding: 24px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #0dcaf0;
+  text-shadow: 0 0 10px rgba(13, 202, 240, 0.3);
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  margin: 4px 16px;
+  padding: 10px 16px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link i {
+  width: 24px;
+  text-align: center;
+  margin-right: 8px;
+}
+
+/* Cards Pill Style */
+.card-glass {
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  margin-bottom: 24px;
+  color: #fff;
+}
+
+/* Force dark text explicitly elements inside glasses to be white */
+.card-glass h1,
+.card-glass h2,
+.card-glass h3,
+.card-glass h4,
+.card-glass h5,
+.card-glass h6,
+.card-glass .text-dark,
+.card-glass .text-muted {
+  color: #fff !important;
+}
+
+.card-glass .text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.card-glass .table-light {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.card-glass .table {
+  color: #fff;
+}
+.card-glass .table > tbody > tr > td,
+.card-glass .table > thead > tr > th {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.card-glass .table-hover > tbody > tr:hover > td,
+.card-glass .table-hover > tbody > tr:hover > th {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.btn-pill {
+  border-radius: 50px;
+  font-weight: 600;
+  padding: 8px 24px;
+  transition: all 0.3s ease;
+}
+
+.btn-cyan {
+  background-color: var(--primary-cyan);
+  color: #fff;
+  border: none;
+}
+
+.btn-cyan:hover {
+  background-color: var(--primary-cyan-dark);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 188, 212, 0.3);
+}
+
+.input-rounded {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.input-rounded:focus {
+  border-color: var(--primary-cyan);
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* Custom Scrollbar para a Sidebar e outras áreas */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-cyan);
+}
+
+/* Sidebar Dropdown Animation */
+.sidebar-menu-toggle {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.sidebar-menu-toggle .transition-icon {
+  font-size: 0.8rem;
+}
+.sidebar-menu-toggle[aria-expanded="true"] .transition-icon {
+  transform: rotate(180deg);
+}
+.sidebar-menu-toggle:hover {
+  color: #fff !important;
+  opacity: 1 !important;
+}

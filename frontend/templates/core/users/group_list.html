@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+{% block title %}Grupos & Permissões | S.E.T{% endblock %}
+{% block page_title %}Grupos de Usuários{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0 text-dark">Grupos de Acesso</h5>
+        <a href="{% url 'core:group-create' %}" class="btn btn-primary shadow-sm" style="border-radius: 10px;">
+            <i class="fas fa-users-cog me-2"></i>Novo Grupo
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nome do Grupo</th>
+                    <th>Qtd. Permissões Associadas</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in grupos %}
+                <tr>
+                    <td class="fw-bold">
+                        <i class="fas fa-shield-alt text-primary me-2"></i>
+                        {{ g.name }}
+                    </td>
+                    <td>
+                        <span class="badge bg-info text-dark">{{ g.permissions.count }} permissões</span>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'core:group-update' g.pk %}" class="btn btn-sm btn-outline-primary" title="Editar">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{% url 'core:group-delete' g.pk %}" class="btn btn-sm btn-outline-danger ms-1" title="Excluir">
+                            <i class="fas fa-trash-alt"></i> Excluir
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-4">
+                        Nenhum grupo de permissão cadastrado. Apenas superusuários terão acesso total.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

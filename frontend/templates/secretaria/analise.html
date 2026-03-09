@@ -1,0 +1,266 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Análise - Secretaria{% endblock %}
+{% block page_title %}Análise da Secretaria{% endblock %}
+
+{% block content %}
+<!-- KPIs -->
+<div class="row g-4 mb-4">
+    <!-- Total Áreas -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid #0dcaf0;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas fa-map-marked-alt fa-2x text-info"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Total de Áreas</h6>
+            </div>
+            <h2 class="display-5 fw-bold text-dark mb-0">{{ total_areas }}</h2>
+        </div>
+    </div>
+    
+    <!-- Total Congregações -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid #6610f2;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas fa-church fa-2x" style="color: #6610f2;"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Congregações</h6>
+            </div>
+            <h2 class="display-5 fw-bold text-dark mb-0">{{ total_congregacoes }}</h2>
+        </div>
+    </div>
+    
+    <!-- Total Membresia -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid #198754;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas fa-users fa-2x text-success"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Membresia</h6>
+            </div>
+            <h2 class="display-5 fw-bold text-dark mb-2">{{ total_geral }}</h2>
+            <div class="d-flex justify-content-around text-muted small fw-semibold">
+                <span><i class="fas fa-user text-secondary"></i> {{ total_membros_comuns }} Membros</span>
+                <span><i class="fas fa-user-tie text-secondary"></i> {{ total_obreiros }} Obreiros</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Crescimento -->
+    <div class="col-md-3">
+        <div class="card-glass h-100 p-4 text-center" style="border-left: 5px solid {% if crescimento_pct >= 0 %}#198754{% else %}#dc3545{% endif %};">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <i class="fas {% if crescimento_pct >= 0 %}fa-chart-line text-success{% else %}fa-chart-line fa-flip-vertical text-danger{% endif %} fa-2x"></i>
+                <h6 class="text-muted text-uppercase fw-bold mb-0">Crescimento (Mês)</h6>
+            </div>
+            <h2 class="display-5 fw-bold {% if crescimento_pct >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+                {% if crescimento_pct > 0 %}+{% endif %}{{ crescimento_pct }}%
+            </h2>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <!-- Chart 1: Crescimento Geral -->
+    <div class="col-md-6">
+        <div class="card-glass p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0 text-dark">Evolução das Congregações</h5>
+                <select class="form-select form-select-sm w-auto rounded-pill border-2 bg-light shadow-sm area-filter" data-target="geral">
+                    <option value="all">Todas as Áreas</option>
+                    {% for item in areas_comparativo %}
+                    <option value="{{ item.obj.id }}">{{ item.obj.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="height: 250px; width: 100%;">
+                <canvas id="chartGeral"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart 2: Membresia -->
+    <div class="col-md-6">
+        <div class="card-glass p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0 text-dark">Evolução da Membresia</h5>
+                <select class="form-select form-select-sm w-auto rounded-pill border-2 bg-light shadow-sm area-filter" data-target="membresia">
+                    <option value="all">Todas as Áreas</option>
+                    {% for item in areas_comparativo %}
+                    <option value="{{ item.obj.id }}">{{ item.obj.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="height: 250px; width: 100%;">
+                <canvas id="chartMembresia"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comparativo por Área (Collapse) -->
+<div class="row">
+    <div class="col-12">
+        <div class="card-glass p-4">
+            <h5 class="fw-bold mb-4 text-dark"><i class="fas fa-list-ul me-2"></i> Comparativo por Área</h5>
+            
+            <div class="accordion accordion-flush" id="accordionAreas">
+                {% for item in areas_comparativo %}
+                <div class="accordion-item bg-transparent border-0 mb-3" style="border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <h2 class="accordion-header" id="heading{{ item.obj.id }}">
+                        <button class="accordion-button collapsed fw-bold bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ item.obj.id }}" aria-expanded="false" aria-controls="collapse{{ item.obj.id }}" style="border-radius: 12px;">
+                            {{ item.obj.nome }}
+                            <span class="badge bg-info text-dark ms-3 rounded-pill">{{ item.membros }} membros</span>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ item.obj.id }}" class="accordion-collapse collapse bg-light" aria-labelledby="heading{{ item.obj.id }}" data-bs-parent="#accordionAreas">
+                        <div class="accordion-body border-top">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-2 mb-md-0">
+                                    <h6 class="text-muted text-uppercase small fw-bold mb-1">Membros</h6>
+                                    <h4 class="fw-bold text-dark mb-0">{{ item.membros }}</h4>
+                                </div>
+                                <div class="col-md-4 mb-2 mb-md-0">
+                                    <h6 class="text-muted text-uppercase small fw-bold mb-1">Congregações</h6>
+                                    <h4 class="fw-bold text-dark mb-0">{{ item.congregacoes }}</h4>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted text-uppercase small fw-bold mb-1">Crescimento</h6>
+                                    <h4 class="fw-bold {% if item.crescimento >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+                                        {% if item.crescimento > 0 %}+{% endif %}{{ item.crescimento }}%
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-4">Nenhuma área cadastrada.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Dados recebidos do Backend
+        const labels = {{ chart_labels|safe }};
+        const dataGeral = {{ chart_data_geral|safe }};
+        const dataMembresia = {{ chart_data_membresia|safe }};
+        
+        // Cores padrão (Ciano e Roxo)
+        const primaryColor = '#0dcaf0';
+        const secondaryColor = '#6610f2';
+
+        // Configuração Gráfico Geral
+        const ctxGeral = document.getElementById('chartGeral').getContext('2d');
+        const chartGeral = new Chart(ctxGeral, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total de Congregações',
+                    data: dataGeral,
+                    borderColor: primaryColor,
+                    backgroundColor: 'rgba(13, 202, 240, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: primaryColor,
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5], color: '#e9ecef' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+        
+        // Configuração Gráfico Membresia (Focado nos membros normais)
+        const ctxMembresia = document.getElementById('chartMembresia').getContext('2d');
+        const chartMembresia = new Chart(ctxMembresia, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Crescimento de Membros Comuns',
+                    data: dataMembresia,
+                    backgroundColor: secondaryColor,
+                    borderRadius: 6,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5], color: '#e9ecef' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Dados por Area recebidos do Backend via JSON
+        const dataByArea = {{ chart_data_by_area_json|safe }};
+
+        // Interatividade Simples para Filtros de Área
+        document.querySelectorAll('.area-filter').forEach(select => {
+            select.addEventListener('change', function() {
+                const targetChart = this.getAttribute('data-target');
+                const selectedValue = this.value; // 'all' or area_id
+                
+                let newData = [];
+                
+                if (selectedValue === 'all') {
+                    // Restaurar dados gerais
+                    newData = targetChart === 'geral' ? dataGeral : dataMembresia;
+                } else {
+                    // Buscar dados da área selecionada
+                    if (dataByArea[selectedValue]) {
+                        newData = targetChart === 'geral' ? dataByArea[selectedValue].geral : dataByArea[selectedValue].membresia;
+                    } else {
+                        // Fallback se não tiver dados (tudo zero)
+                        newData = Array(labels.length).fill(0);
+                    }
+                }
+                
+                // Atualizar o gráfico correspondente
+                if (targetChart === 'geral') {
+                    chartGeral.data.datasets[0].data = newData;
+                    chartGeral.update();
+                } else if (targetChart === 'membresia') {
+                    chartMembresia.data.datasets[0].data = newData;
+                    chartMembresia.update();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

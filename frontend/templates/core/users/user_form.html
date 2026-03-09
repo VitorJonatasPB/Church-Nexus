@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+    {% if object %}Editar Usuário{% else %}Novo Usuário{% endif %} | S.E.T
+{% endblock %}
+{% block page_title %}
+    {% if object %}Editar Usuário: {{ object.username }}{% else %}Novo Usuário{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="card-glass p-4">
+    <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Login (Username) *</label>
+                {% render_field form.username class="form-control" %}
+                {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">E-mail</label>
+                {% render_field form.email class="form-control" type="email" %}
+                {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Nome</label>
+                {% render_field form.first_name class="form-control" %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Sobrenome</label>
+                {% render_field form.last_name class="form-control" %}
+            </div>
+            
+            <div class="col-md-12 mb-3">
+                <label class="form-label fw-bold">Grupos (Permissões)</label>
+                {% render_field form.groups class="form-select" size="4" %}
+                <small class="text-muted">Pressione CTRL (ou Command) para selecionar múltiplos grupos.</small>
+            </div>
+            
+            <div class="col-md-12 mb-4 d-flex flex-wrap gap-4 p-3 bg-light rounded bg-opacity-50">
+                <div class="form-check form-switch pe-4 border-end">
+                    {% render_field form.is_active class="form-check-input" %}
+                    <label class="form-check-label fw-bold">Usuário Ativo (Pode fazer login)</label>
+                </div>
+                <div class="form-check form-switch pe-4 border-end">
+                    {% render_field form.is_staff class="form-check-input" %}
+                    <label class="form-check-label fw-bold text-primary">Acesso ao Admin (Staff)</label>
+                </div>
+                <div class="form-check form-switch">
+                    {% render_field form.is_superuser class="form-check-input" %}
+                    <label class="form-check-label fw-bold text-danger">Superusuário (Acesso Total)</label>
+                </div>
+            </div>
+        </div>
+
+        {% if not object %}
+        <div class="alert alert-info border-info mb-4" style="background-color: rgba(13, 202, 240, 0.1);">
+            <i class="fas fa-info-circle me-2 text-info"></i> <strong>Atenção:</strong> A senha padrão para este novo usuário será configurada automaticamente como <code>123456</code>. Você ou o próprio usuário poderá alterá-la depois pelo sistema.
+        </div>
+        {% endif %}
+
+        <hr>
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'core:user-list' %}" class="btn btn-secondary shadow-sm">Cancelar</a>
+            <button type="submit" class="btn btn-success shadow-sm">
+                <i class="fas fa-save me-2"></i>Salvar Usuário
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
