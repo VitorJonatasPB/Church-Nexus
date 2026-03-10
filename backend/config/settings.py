@@ -7,11 +7,11 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k8ks_(zvkir(g_a#$p3o1y06w1o=ksqrg#1!^v01*=p%oq1^1$'
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['postgresql://postgres:[NATMXR2xS0jyjipd]@db.ojgffuqezksnnbpvgmwf.supabase.co:5432/postgres']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [  
     'jazzmin',
     'dal',
     'dal_select2',
@@ -30,7 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
