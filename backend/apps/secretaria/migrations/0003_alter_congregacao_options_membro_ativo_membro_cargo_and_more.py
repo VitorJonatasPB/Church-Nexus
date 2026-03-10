@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='membro',
             name='telefone',
-            field=models.CharField(default='telefone não informado', max_length=20),
+            field=models.CharField(default='não informado', max_length=20),
             preserve_default=False,
         ),
         migrations.AlterField(
