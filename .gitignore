@@ -20,3 +20,11 @@ __pycache__/
 # Pastas de arquivos estáticos/mídia gerados
 staticfiles/
 media/
+
+#IA
+.agents/
+
+.vscode/
+.inspirações/
+reorganize.py
+tracked_files.txt
