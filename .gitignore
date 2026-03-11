@@ -21,10 +21,10 @@ __pycache__/
 staticfiles/
 media/
 
-#IA
-.agents/
 
+.agents/
 .vscode/
 .inspirações/
 reorganize.py
 tracked_files.txt
+temp_cleanup.py
