@@ -57,4 +57,4 @@ python manage.py runserver
 Acesse o sistema no navegador em: `http://127.0.0.1:8000`
 
 ---
-*Projeto desenvolvido por Vitor Paiva.*
+*Projeto desenvolvido por Vitor Jôntas Paiva Barbpsa.*
